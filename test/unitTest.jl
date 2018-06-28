@@ -1,5 +1,5 @@
 using DataFrames
-using Test
+using Base.Test
 include("../src/utils.jl")
 
 @testset "one hot encoding" begin

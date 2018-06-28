@@ -43,7 +43,7 @@ function oneHotEncode(data::DataFrame)
         oneHotEncoded = zeros(Int, rowSize, length(sortedUniqueValues))
         for (row,val) in enumerate(data[column])
 
-            col = findall(sortedUniqueValues .== val)
+            col = find(sortedUniqueValues .== val)
 
             oneHotEncoded[row, col] .= one(Int)
         end
@@ -92,8 +92,8 @@ julia> auc(yTruth, yScore)
 """
 function auc(yTruth::Array{Int}, yScore::Array{Float64})
 
-	dIndex = findall(1 .== yTruth)
-	dnIndex = findall(0 .== yTruth)
+	dIndex = find(1 .== yTruth)
+	dnIndex = find(0 .== yTruth)
 	score = 0.0
 
 	for ydn in dnIndex
