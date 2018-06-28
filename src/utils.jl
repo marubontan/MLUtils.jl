@@ -1,5 +1,6 @@
 using DataFrames
 
+
 """
     oneHotEncode(data)
 
@@ -42,9 +43,9 @@ function oneHotEncode(data::DataFrame)
         oneHotEncoded = zeros(Int, rowSize, length(sortedUniqueValues))
         for (row,val) in enumerate(data[column])
 
-            col = find(sortedUniqueValues .== val)
+            col = findall(sortedUniqueValues .== val)
 
-            oneHotEncoded[row, col] = one(Int)
+            oneHotEncoded[row, col] .= one(Int)
         end
         oneHotEncodedDF = DataFrame(oneHotEncoded)
 
@@ -60,6 +61,7 @@ function oneHotEncode(data::DataFrame)
 
     return output
 end
+
 
 """
 	auc(yTruth, yScore)
@@ -90,8 +92,8 @@ julia> auc(yTruth, yScore)
 """
 function auc(yTruth::Array{Int}, yScore::Array{Float64})
 
-	dIndex = find(1 .== yTruth)
-	dnIndex = find(0 .== yTruth)
+	dIndex = findall(1 .== yTruth)
+	dnIndex = findall(0 .== yTruth)
 	score = 0.0
 
 	for ydn in dnIndex
@@ -108,4 +110,17 @@ function auc(yTruth::Array{Int}, yScore::Array{Float64})
 	end
 
 	return score / (length(dIndex) * length(dnIndex))
+end
+
+
+function brier(yTruth::Array{Int}, yScore::Array{Float64})
+
+    n = length(yTruth)
+
+    errorSum = zero(1)
+    for iter in zip(yTruth, yScore)
+        errorSum += abs2(iter[2] - iter[1])
+    end
+
+    return errorSum / n
 end
