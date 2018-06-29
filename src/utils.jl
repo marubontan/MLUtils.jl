@@ -1,5 +1,6 @@
 using DataFrames
 
+
 """
     oneHotEncode(data)
 
@@ -44,7 +45,7 @@ function oneHotEncode(data::DataFrame)
 
             col = find(sortedUniqueValues .== val)
 
-            oneHotEncoded[row, col] = one(Int)
+            oneHotEncoded[row, col] .= one(Int)
         end
         oneHotEncodedDF = DataFrame(oneHotEncoded)
 
@@ -60,6 +61,7 @@ function oneHotEncode(data::DataFrame)
 
     return output
 end
+
 
 """
 	auc(yTruth, yScore)
@@ -108,4 +110,44 @@ function auc(yTruth::Array{Int}, yScore::Array{Float64})
 	end
 
 	return score / (length(dIndex) * length(dnIndex))
+end
+
+
+"""
+    brier(yTruth, yScore)
+
+Calculate brier score.
+
+# Argument
+- `yTruth::Array`: The Array composed of (0, 1) which indicate the class
+- `yScore::Array`: The predicted scores
+
+# Examples
+```julia-brier
+julia> yTruth = [1, 0, 1]
+3-element Array{Int64,1}:
+ 1
+ 0
+ 1
+
+julia> yScore = [0.2, 0.3, 0.8]
+3-element Array{Float64,1}:
+ 0.2
+ 0.3
+ 0.8
+
+julia> brier(yTruth, yScore)
+0.25666666666666665
+```
+"""
+function brier(yTruth::Array{Int}, yScore::Array{Float64})
+
+    n = length(yTruth)
+
+    errorSum = zero(1)
+    for iter in zip(yTruth, yScore)
+        errorSum += abs2(iter[2] - iter[1])
+    end
+
+    return errorSum / n
 end
