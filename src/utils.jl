@@ -10,7 +10,7 @@ Do one-hot-encoding to the input data.
 - `data::DataFrame`: DataFrame from DataFrames package which contains only one-hot-encoding target
 
 # Examples
-```julia-OneHotEncode
+```julia-oneHotEncode
 julia> dataA = DataFrame(x=[1, 2], y=[3, 4])
 2×2 DataFrames.DataFrame
 │ Row │ x │ y │
@@ -60,6 +60,49 @@ function oneHotEncode(data::DataFrame)
     end
 
     return output
+end
+
+
+"""
+    trainTestSplit(data; trainSize=0.5, shuffle=true)
+
+Split data into train and test ones with specified rate.
+
+# Argument
+- `data::DataFrame`: target data to split
+- `trainSize::Float64`: assigned rate for train data(0 < trainSize < 1)
+- `shuffle::Bool`: if true, the data is shuffled before splited
+
+# Examples
+```julia-trainTestSplit
+julia> dataA = DataFrame(x=[1, 2], y=[3, 4])
+2×2 DataFrames.DataFrame
+│ Row │ x │ y │
+├─────┼───┼───┤
+│ 1   │ 1 │ 3 │
+│ 2   │ 2 │ 4 │
+
+julia> trainTestSplit(dataA)
+(1×2 DataFrames.DataFrame
+│ Row │ x │ y │
+├─────┼───┼───┤
+│ 1   │ 2 │ 4 │, 1×2 DataFrames.DataFrame
+│ Row │ x │ y │
+├─────┼───┼───┤
+│ 1   │ 1 │ 3 │)
+```
+"""
+function trainTestSplit(data::DataFrame; trainSize=0.5, shuffle=true)
+
+    @assert 0 < trainSize < 1
+
+    rowNum = nrow(data)
+    rowIndex = collect(1:rowNum)
+
+    shuffle && shuffle!(rowIndex)
+    threshold = Int(ceil(rowNum * trainSize))
+
+    return (data[rowIndex[1:threshold], :], data[rowIndex[threshold + 1:rowNum], :])
 end
 
 
