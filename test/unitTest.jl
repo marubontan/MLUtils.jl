@@ -2,15 +2,23 @@ using DataFrames
 using Base.Test
 include("../src/utils.jl")
 
-@testset "one hot encoding" begin
+@testset "pre-processing" begin
     dataA = DataFrame(x=[1, 2], y=[3, 4])
-    @test oneHotEncode(dataA) == DataFrame(x_1=[1, 0], x_2=[0, 1], y_3=[1, 0], y_4=[0, 1])
-
     dataB = DataFrame(x=['a', 'b'], y=['c', 'd'])
-    @test oneHotEncode(dataB) == DataFrame(x_a=[1, 0], x_b=[0, 1], y_c=[1, 0], y_d=[0, 1])
-
     dataC = DataFrame(x=['a', 'a'])
-    @test oneHotEncode(dataC) == DataFrame(x_a=[1, 1])
+    @testset "one hot encoding" begin
+        @test oneHotEncode(dataA) == DataFrame(x_1=[1, 0], x_2=[0, 1], y_3=[1, 0], y_4=[0, 1])
+        @test oneHotEncode(dataB) == DataFrame(x_a=[1, 0], x_b=[0, 1], y_c=[1, 0], y_d=[0, 1])
+        @test oneHotEncode(dataC) == DataFrame(x_a=[1, 1])
+    end
+
+    @testset "train test split" begin
+        @test trainTestSplit(dataA) in [(DataFrame(x=[1], y=[3]), DataFrame(x=[2], y=[4])),
+        (DataFrame(x=[2], y=[4]), DataFrame(x=[1], y=[3]))]
+        @test trainTestSplit(dataB) in [(DataFrame(x=['a'], y=['c']), DataFrame(x=['b'], y=['d'])),
+        (DataFrame(x=['b'], y=['d']), DataFrame(x=['a'], y=['c']))]
+        @test_throws AssertionError trainTestSplit(dataA; trainSize=1.1)
+    end
 end
 
 @testset "evalutaion" begin
