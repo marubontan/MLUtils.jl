@@ -21,7 +21,7 @@ include("../src/utils.jl")
     end
 end
 
-@testset "evalutaion" begin
+@testset "evaluation" begin
 
     yA = [1, 0, 1]
     yScoreA = [0.2, 0.3, 0.8]
