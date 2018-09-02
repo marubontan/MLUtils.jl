@@ -1,5 +1,5 @@
 using DataFrames
-using Base.Test
+using Test
 include("../src/utils.jl")
 
 @testset "pre-processing" begin
