@@ -1,6 +1,7 @@
 using DataFrames
 using Test
 include("../src/utils.jl")
+include("../src/distance.jl")
 
 @testset "pre-processing" begin
     dataA = DataFrame(x=[1, 2], y=[3, 4])
@@ -43,4 +44,21 @@ end
         @test brier(yB, yScoreB) == (abs2(0.8 - 1) + abs2(0.8 - 1) + abs2(0.1 - 0)) / 3
         @test brier(yC, yScoreC) == (abs2(0.3 - 1) + abs2(0.6 - 0) + abs2(0.5 - 0)) / 3
     end
+end
+
+@testset "distance function" begin
+    dataSourceNum = [1.0, 2.0]
+    dataDestNum = [3.0, 4.0]
+    @test euclidean(dataSourceNum, dataDestNum) == sqrt(8)
+    @test minkowski(dataSourceNum, dataDestNum) == 4
+
+    dataSourceStr = ["cat", "dog"]
+    dataDestStr = ["human", "fish"]
+    @test_throws MethodError euclidean(dataSourceStr, dataDestStr)
+    @test_throws MethodError minkowski(dataSourceStr, dataDestStr)
+
+    dataSourceLen = [1.0, 2.0]
+    dataDestLen = [3.0, 4.0, 5.0]
+    @test_throws ErrorException euclidean(dataSourceLen, dataDestLen)
+    @test_throws ErrorException minkowski(dataSourceLen, dataDestLen)
 end
